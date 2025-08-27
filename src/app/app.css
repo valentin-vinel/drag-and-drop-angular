@@ -1,0 +1,74 @@
+* {
+    font-family: Impact, sans-serif;
+}
+
+h1 {
+    text-align: center;
+}
+
+.container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.card {
+    width: 200px;
+    height: 200px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    border: 1px solid black;
+    margin: 1rem;
+    text-align: center;
+    border-radius: 1rem;
+    cursor: grab;
+    transition: transform 0.2s ease;
+}
+
+.card:hover{
+    background-color: grey;
+    color: white;
+    cursor: pointer;
+}
+
+.modal-backdrop {
+    position: fixed;
+    top: 0; 
+    left: 0; 
+    right: 0; 
+    bottom: 0;
+    background: rgba(0,0,0,0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+}
+  
+.modal {
+    background: black;
+    color: white;
+    border: 1px solid white;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 12px;
+    padding: 1.5rem;
+    border-radius: 1rem;
+    max-width: 400px;
+}
+
+.form > input {
+    width: 50px;
+    font-size: 1.2rem;
+    margin-left: 1rem;
+}
+
+.buttons {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin-top: 2rem;
+}

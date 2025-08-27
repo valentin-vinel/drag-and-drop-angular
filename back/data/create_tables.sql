@@ -1,0 +1,5 @@
+CREATE TABLE IF NOT EXISTS cards (
+    "id" SERIAL PRIMARY KEY,
+    "name" VARCHAR(100) NOT NULL,
+    "position" INT NOT NULL
+);

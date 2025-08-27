@@ -1,0 +1,15 @@
+###
+# GET all AppUser
+GET http://localhost:5002/cards
+Content-Type: application/json
+###
+
+###
+# GET one hero by id
+PATCH http://localhost:5002/cards/1
+
+Content-Type: application/json
+{
+    "position": 5
+}
+###

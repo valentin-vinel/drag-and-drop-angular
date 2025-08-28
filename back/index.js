@@ -10,7 +10,7 @@ const corsOptions = {
 	origin: [
 		`http://localhost:4200`,
 	],
-	methods: ["GET", "POST", "PATCH", "DELETE"],
+	methods: ["GET", "POST", "PATCH", "PUT", "DELETE"],
 	credentials: true // autorisation des credentials reçu par le front
 };
 

@@ -2,7 +2,7 @@
 
 <div class="container">
   @for (card of cardList(); track $index) {
-    <div class="card" >
+    <div class="card" (click)="openCardModal(card)">
       <h2>{{ card.name }}</h2>
       <p>position: {{ card.position }}</p>
     </div>
@@ -10,21 +10,20 @@
 </div>
 
 <!-- Modal -->
-<!-- @if (selectedCard) {
+@if (showModal) {
   <div class="modal-backdrop">
     <div class="modal">
-      <h2>Modifier position de {{ selectedCard.name }}</h2>
+      <h2>Modifier position de {{ selectedCard?.name }}</h2>
   
-      <form [formGroup]="positionForm" (submit)="savePosition()" class="form">
+      <form [formGroup]="formGroup" (submit)="savePosition()" class="form">
         <label>Nouvelle position :</label>
         <input type="number" formControlName="position">
-        @if (positionForm.controls['position'].invalid) {}
   
         <div class="buttons">
-          <button type="submit" [disabled]="positionForm.invalid">Sauvegarder</button>
+          <button type="submit" [disabled]="formGroup.invalid">Sauvegarder</button>
           <button type="button" (click)="closeModal()">Annuler</button>
         </div>
       </form>
     </div>
   </div>
-} -->
+}

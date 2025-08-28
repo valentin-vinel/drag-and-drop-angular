@@ -1,3 +1,5 @@
+TRUNCATE TABLE cards RESTART IDENTITY CASCADE;
+
 INSERT INTO cards (name, position) VALUES
 ('Card 1', 1),
 ('Card 2', 2),

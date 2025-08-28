@@ -1,3 +1,4 @@
+import { pgPool } from "../config/pgPool.js";
 import * as cardsDataMapper from "../dataMappers/cardsDataMapper.js"
 
 export const getAll = async (req, res) => {
@@ -31,3 +32,35 @@ export const updateOne = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
+
+export const reorder = async (req, res) => {
+  const updates = req.body;
+
+  if (!Array.isArray(updates)) {
+    return res.status(400).json({ error: 'Body must be an array of {id, position}' });
+  }
+
+  const client = await pgPool.connect();
+  try {
+    await client.query('BEGIN');
+
+    const updatedCards = [];
+    for (const u of updates) {
+      const result = await client.query(
+        'UPDATE cards SET position = $1 WHERE id = $2 RETURNING *',
+        [u.position, u.id]
+      );
+      updatedCards.push(result.rows[0]);
+    }
+
+    await client.query('COMMIT');
+
+    res.json(updatedCards);
+  } catch (err) {
+    await client.query('ROLLBACK');
+    console.error(err);
+    res.status(500).json({ error: 'Erreur lors du reorder' });
+  } finally {
+    client.release();
+  }
+}

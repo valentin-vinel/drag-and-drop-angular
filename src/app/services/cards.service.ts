@@ -18,11 +18,15 @@ export class CardsService {
   }
 
   update(card: Card): Observable<Card> {
-		return this.http.put<Card>(this.BASE_URL + 'cards/' + card.id, card).pipe(
+		return this.http.patch<Card>(this.BASE_URL + 'cards/' + card.id, card).pipe(
 			tap((response: Card) => this.log(response)),
       catchError((error: Error) => this.handleError(error, null))
 		);
 	}
+
+  reorder(payload: { id: number; position: number }[]): Observable<Card[]> {
+    return this.http.put<Card[]>(this.BASE_URL + "cards/reorder", payload);
+  }
 
   private log(response: any) {
     console.table(response);

@@ -1,8 +1,8 @@
 <h1>{{ title() }}</h1>
 
 <div class="container">
-  @for (card of cards; track $index) {
-    <div class="card" (click)="openUpdateModal(card)">
+  @for (card of cardList(); track $index) {
+    <div class="card" >
       <h2>{{ card.name }}</h2>
       <p>position: {{ card.position }}</p>
     </div>
@@ -10,7 +10,7 @@
 </div>
 
 <!-- Modal -->
-@if (selectedCard) {
+<!-- @if (selectedCard) {
   <div class="modal-backdrop">
     <div class="modal">
       <h2>Modifier position de {{ selectedCard.name }}</h2>
@@ -27,4 +27,4 @@
       </form>
     </div>
   </div>
-}
+} -->

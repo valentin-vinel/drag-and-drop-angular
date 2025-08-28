@@ -1,27 +1,33 @@
 import * as cardsDataMapper from "../dataMappers/cardsDataMapper.js"
 
 export const getAll = async (req, res) => {
-    try {
-        const cards = await cardsDataMapper.findAll();
-    
-        res.render("/", { cards });
-    } catch (error) {
-        res.status(500).send('Erreur serveur');
+  try {
+    const cards = await cardsDataMapper.findAll();
+
+    if (!cards || cards.length === 0) {
+      return res.status(404).json({ message: "Aucune carte trouvée" });
     }
+
+    return res.json(cards);
+  } catch (error) {
+    console.error("Erreur dans getAll:", error);
+    return res.status(500).json({ error: "Erreur serveur" });
+  }
 };
 
 export const updateOne = async (req, res) => {
-    try {
-        const { id } = req.params;
-        const newData = req.body;
+  try {
+    const id = parseInt(req.params.id);
+    const newData = req.body;
 
-        // Met à jour la carte via le datamapper
-        const updatedCard = await cardsDataMapper.update(id, newData);
-
-        // Retourne la carte mise à jour
-        res.json(updatedCard);
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: 'Erreur serveur' });
+    if (!newData || Object.keys(newData).length === 0) {
+      return res.status(400).json({ error: "Body vide, rien à mettre à jour" });
     }
+
+    const updatedCard = await cardsDataMapper.update(id, newData);
+    res.json(updatedCard);
+  } catch (error) {
+    console.error("Erreur updateOne:", error);
+    res.status(500).json({ error: error.message });
+  }
 };

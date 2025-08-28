@@ -2,11 +2,9 @@ import { Component, ElementRef, inject, signal, ViewChild } from '@angular/core'
 import { CARDS } from './cards';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-
-export interface Card {
-  name: string;
-  position: number;
-}
+import { Card } from './models/card.model';
+import { CardsService } from './services/cards.service';
+import { toSignal } from '@angular/core/rxjs-interop';
 
 @Component({
   standalone: true,
@@ -18,42 +16,51 @@ export interface Card {
 export class App {
   protected readonly title = signal('Drag and drop - Angular');
 
-  private fb = inject(FormBuilder);
+  private cardService = inject(CardsService)
 
-  cards: Card[] = CARDS;
-  selectedCard: Card | null = null;
-  positionForm!: FormGroup;
+  // Initialisation de ma liste de cards
+  cardList = toSignal<Card[]>(this.cardService.getCards())
 
-  openUpdateModal(card: Card) {
-    this.selectedCard = { ...card };
-    console.log(this.selectedCard)
+  // on fait une copie modifiable
+  // cards = signal<Card[]>(this.cardListSignal());
 
-    this.positionForm = this.fb.group({
-      position: [card.position, [
-        Validators.required, 
-        Validators.min(1), 
-        Validators.max(this.cards.length)
-      ]]
-    });
-  }
+  // private fb = inject(FormBuilder);
 
-  closeModal() {
-    this.selectedCard = null;
-  }
+  // selectedCard: Card | null = null;
+  // positionForm!: FormGroup;
 
-  savePosition() {
-    if (!this.selectedCard || !this.positionForm.valid) return;
+  // openUpdateModal(card: Card) {
+  //   this.selectedCard = { ...card };
+  //   console.log(this.selectedCard)
 
-    const newPosition = this.positionForm.value.position;
-    const oldIndex = this.cards.findIndex(c => c.name === this.selectedCard!.name);
-    const card = this.cards.splice(oldIndex, 1)[0];
+  //   this.positionForm = this.fb.group({
+  //     position: [card.position, [
+  //       Validators.required, 
+  //       Validators.min(1), 
+  //       Validators.max(this.cards().length)
+  //     ]]
+  //   });
+  // }
 
-    const newIndex = Math.min(Math.max(newPosition - 1, 0), this.cards.length);
-    this.cards.splice(newIndex, 0, card);
+  // closeModal() {
+  //   this.selectedCard = null;
+  // }
 
-    // Mettre à jour les positions
-    this.cards = this.cards.map((c, i) => ({ ...c, position: i + 1 }));
+  // savePosition() {
+  //   if (!this.selectedCard || !this.positionForm.valid) return;
 
-    this.closeModal();
-  }
+  //   const cardsCopy = [...this.cards()];
+  //   const newPosition = this.positionForm.value.position;
+  //   const oldIndex = cardsCopy.findIndex(c => c.id === this.selectedCard!.id);
+  //   const card = cardsCopy.splice(oldIndex, 1)[0];
+
+  //   const newIndex = Math.min(Math.max(newPosition - 1, 0), cardsCopy.length);
+  //   cardsCopy.splice(newIndex, 0, card);
+
+  //   const updated = cardsCopy.map((c, i) => ({ ...c, position: i + 1 }));
+
+  //   this.cards.set(updated);
+
+  //   this.closeModal();
+  // }
 }

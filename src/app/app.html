@@ -1,8 +1,8 @@
 <h1>{{ title() }}</h1>
 
-<div class="container">
+<div class="container" cdkDropList cdkDropListOrientation="mixed" (cdkDropListDropped)="drop($event)">
   @for (card of cardList(); track $index) {
-    <div class="card" (click)="openCardModal(card)">
+    <div class="card" cdkDrag>
       <h2>{{ card.name }}</h2>
       <p>position: {{ card.position }}</p>
     </div>
@@ -10,7 +10,7 @@
 </div>
 
 <!-- Modal -->
-@if (showModal) {
+<!-- @if (showModal) {
   <div class="modal-backdrop">
     <div class="modal">
       <h2>Modifier position de {{ selectedCard?.name }}</h2>
@@ -26,4 +26,4 @@
       </form>
     </div>
   </div>
-}
+} -->

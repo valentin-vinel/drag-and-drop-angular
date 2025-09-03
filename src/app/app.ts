@@ -3,12 +3,12 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { CommonModule } from '@angular/common';
 import { Card } from './models/card.model';
 import { CardsService } from './services/cards.service';
-import { forkJoin } from 'rxjs';
+import { CdkDrag, CdkDragDrop, CdkDropList, moveItemInArray } from '@angular/cdk/drag-drop';
 
 @Component({
   standalone: true,
   selector: 'app-root',
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, CdkDropList, CdkDrag],
   templateUrl: './app.html',
   styleUrls: ['./app.css']
 })
@@ -38,67 +38,20 @@ export class App {
     });
   }
 
-  openCardModal(card: Card) {
-    this.selectedCard = { ...card };
+  drop(event: CdkDragDrop<Card[]>) {
+    moveItemInArray(this.cardList(), event.previousIndex, event.currentIndex);
 
-    this.formGroup.patchValue({
-      position: this.selectedCard.position
-    });
+    this.cardList().forEach((card, index) => {
+      card.position = index + 1;
+      console.log(card.id, card.position)
+    })
 
-    this.showModal = true;
-  }
+    this.cardService.reorder(this.cardList()).subscribe({
+      next: () => console.log("Position sauvegardées"),
+      error: (err) => console.log("Erreur de sauvegarde", err)
+    })
 
-  savePosition() {
-    // Vérifier qu’une carte est sélectionnée et que le formulaire est valide
-    if (!this.selectedCard || this.formGroup.invalid) return;
-
-    const newPosition = this.formGroup.value.position!;
-    const oldPosition = this.selectedCard.position;
-
-    // Clone du tableau actuel pour travailler dessus
-    const after = [...this.cardList()];
-
-    // Étape 1 : recalculer localement les positions des autres cartes
-    after.forEach(c => {
-      if (c.id === this.selectedCard!.id) return; // ignorer la carte déplacée
-
-      // Si déplacement vers le bas : les cartes intermédiaires diminue de pod
-      if (oldPosition < newPosition && c.position > oldPosition && c.position <= newPosition) {
-        c.position -= 1;
-      }
-
-      // Si déplacement vers le haut : les cartes intermédiaires augmente de pos
-      if (oldPosition > newPosition && c.position < oldPosition && c.position >= newPosition) {
-        c.position += 1;
-      }
-    });
-
-    // Appliquer la nouvelle position à la carte déplacée
-    const movedIndex = after.findIndex(c => c.id === this.selectedCard!.id);
-    if (movedIndex !== -1) {
-      after[movedIndex] = { ...this.selectedCard, position: newPosition };
-    }
-
-    // ✅ Créer le payload : toutes les cartes dont la position a changé
-    const payload = after.map(c => ({ id: c.id, position: c.position }));
-
-    // Appel unique au backend
-    this.cardService.reorder(payload).subscribe({
-      next: (updatedCards) => {
-        // Mettre à jour le signal avec les cartes renvoyées par le backend
-        const map = new Map(updatedCards.map(c => [c.id, c]));
-        const merged = after.map(c => map.get(c.id) ?? c);
-        this.cardList.set(merged.sort((a, b) => a.position - b.position));
-
-        this.closeModal();
-      },
-      error: (err) => console.error('Erreur lors du reorder', err),
-    });
-  }
-
-  closeModal() {
-    this.showModal = false;
-    this.selectedCard = null;
+    console.log(this.cardList())
   }
 
 }
